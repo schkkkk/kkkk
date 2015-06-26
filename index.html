@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <title>WEBRTC camera</title>
+<style>
+    * {
+        box-sizing: border-box;
+    }
+    button::-moz-focus-inner {
+        padding: 0;
+        border: 0;
+    }
+    body {
+        margin: 0;
+        background: #000;
+    }
+
+    #container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        -webkit-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
+    }
+        canvas {
+            -webkit-transform-origin: 0 0;
+            transform-origin: 0 0;
+            background: #999;
+        }
+    #control {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        border: 0;
+        border-radius: 30px;
+        background: #fff;
+        color: #333;
+        font-size: 40px;
+    }
+</style>
+<body>
+    <div id="container"><canvas></canvas></div>
+    <button id="control">&#65291;</button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+<script>
+    var container = $('#container');
+    var canvas = $('canvas', container);
+    var context = canvas[0].getContext('2d');
+
+    // 고정
+    canvas.prop(
+        {
+            width:  1920,
+            height: 1080,
+        }
+    );
+
+    /**
+     * 화면에 카메라 영상을 비율유지로 채움
+     * 카메라 영상 고정되게...
+     */
+    $(window).on('resize', function()
+    {
+        var screenW = this.innerWidth,
+            screenH = this.innerHeight,
+            canvasW = canvas.width(),
+            canvasH = canvas.height(),
+            scaleX = screenW / canvasW,
+            scaleY = screenH / canvasH;
+
+        if (scaleX > scaleY)
+        {
+            canvas.css('transform', 'scale(' + scaleY + ')');
+            container.width(canvasW * scaleY)
+                .height(screenH);
+        }
+        else
+        {
+            canvas.css('transform', 'scale(' + scaleX + ')');
+            container.width(screenW)
+                .height(canvasH * scaleX);
+        }
+    }).trigger('resize');
+</script>
+</html>
