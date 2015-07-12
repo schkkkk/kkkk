@@ -22,11 +22,11 @@
         });
         document.querySelector('#r1').addEventListener('click', function(e) {
             console.log(e);
-            navigator.getUserMedia({
+            navigator.webkitGetUserMedia({
                 video: true,
             }, function(stream) {
                 document.querySelector('#r1d').src = window.URL.createObjectURL(stream);
-            });
+            }, function(e) {});
         });
         document.querySelector('#r1d').addEventListener('loadedmetadata', function(e) {
             this.play();
