@@ -6,20 +6,12 @@
     <title>webrtc test</title>
 </head>
 <body>
-    <h1>FILE API</h1>
-    <h2>input type="file" accept="image/*;capture=camera"</h2>
-    <input id="f1" type="file" accept="image/*;capture=camera">
-    <img id="f1d">
-
     <h1>WebRTC</h1>
     <h2>navigator.getUserMedia</h2>
     <button id="r1">click to stream</button>
     <video id="r1d"></video>
 
     <script>
-        document.querySelector('#f1').addEventListener('click', function(e) {
-            console.log(e);
-        });
         document.querySelector('#r1').addEventListener('click', function(e) {
             console.log(e);
             navigator.webkitGetUserMedia({
@@ -30,6 +22,9 @@
         });
         document.querySelector('#r1d').addEventListener('loadedmetadata', function(e) {
             this.play();
+        });
+        MediaStreamTrack.getSources(function(sources) {
+            console.log(sources);
         });
     </script>
 </body>
