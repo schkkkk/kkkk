@@ -12,19 +12,36 @@
     <video id="r1d"></video>
 
     <script>
+        'use strict';
+
+        var cameras = [];
+        MediaStreamTrack.getSources(function(sources) {
+            for (var i of sources)
+            {
+                var source = sources[i];
+                if (source.kind == 'video')
+                {
+                    cameras.push(source);
+                }
+            }
+        });
+
+        var touch = 0;
         document.querySelector('#r1').addEventListener('click', function(e) {
-            console.log(e);
             navigator.webkitGetUserMedia({
-                video: true,
+                video: {
+                    optional: [
+                        {
+                            sourceId: cameras[touch++ % cameras.length],
+                        },
+                    ],
+                },
             }, function(stream) {
                 document.querySelector('#r1d').src = window.URL.createObjectURL(stream);
             }, function(e) {});
         });
         document.querySelector('#r1d').addEventListener('loadedmetadata', function(e) {
             this.play();
-        });
-        MediaStreamTrack.getSources(function(sources) {
-            console.log(sources);
         });
     </script>
 </body>
