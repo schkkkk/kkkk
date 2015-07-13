@@ -13,12 +13,15 @@
 
     <script>
         'use strict';
+        navigator.getUserMedia = navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia;
+        let video = document.querySelector('#r1d');
 
-        var cameras = [];
+        let cameras = [];
         MediaStreamTrack.getSources(function(sources) {
-            for (var i of sources)
+            for (let source of sources)
             {
-                var source = sources[i];
                 if (source.kind == 'video')
                 {
                     cameras.push(source);
@@ -26,22 +29,23 @@
             }
         });
 
-        var touch = 0;
-        document.querySelector('#r1').addEventListener('click', function(e) {
-            navigator.webkitGetUserMedia({
-                video: {
-                    optional: [
-                        {
-                            sourceId: cameras[touch++ % cameras.length],
-                        },
-                    ],
+        let touch = 0;
+        document.querySelector('#r1').addEventListener('click', () =>
+        {
+            if (typeof window.stream === 'undefined')
+            {
+                video.src = null;
+                window.stream.stop();
+            }
+            navigator.getUserMedia(
+                { video: { optional: [{ sourceId: cameras[touch++ % cameras.length] }] } },
+                stream =>
+                {
+                    window.stream = stream;
+                    video.src = window.URL.createObjectURL(stream);
+                    video.play();
                 },
-            }, function(stream) {
-                document.querySelector('#r1d').src = window.URL.createObjectURL(stream);
-            }, function(e) {});
-        });
-        document.querySelector('#r1d').addEventListener('loadedmetadata', function(e) {
-            this.play();
+                () => {});
         });
     </script>
 </body>
