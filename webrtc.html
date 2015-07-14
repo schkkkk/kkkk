@@ -33,7 +33,7 @@
         {
             if (typeof window.stream !== 'undefined')
             {
-                video.src = null;
+                video.pause();
                 window.stream.stop();
             }
             navigator.getUserMedia(
