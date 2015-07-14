@@ -19,8 +19,9 @@
 
         var cameras = [];
         MediaStreamTrack.getSources(function(sources) {
-            for (var source of sources)
+            for (var i = 0, l = sources.length; i < l; i++)
             {
+                var source = sources[i];
                 if (source.kind == 'video')
                 {
                     cameras.push(source);
