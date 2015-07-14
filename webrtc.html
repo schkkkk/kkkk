@@ -31,7 +31,7 @@
         var touch = 0;
         document.querySelector('#r1').addEventListener('click', function()
         {
-            if (typeof window.stream === 'undefined')
+            if (typeof window.stream !== 'undefined')
             {
                 video.src = null;
                 window.stream.stop();
