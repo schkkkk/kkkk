@@ -2,12 +2,10 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="mobile-web-app-capable" content="yes">
     <title>WEBRTC camera</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
         button::-moz-focus-inner {
             padding: 0;
             border: 0;
@@ -16,25 +14,82 @@
             margin: 0;
             background: #000;
         }
-        #canvas {
+        #changeCam {
             position: fixed;
             top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            left: 0;
         }
     </style>
 <body>
     <div id="canvas">
         <video></video>
     </div>
-    <button id="switch">switch</button>
+    <button id="changeCam">switch</button>
     <script>
+        document.documentElement.requestFullscreen = document.documentElement.requestFullscreen ||
+            document.documentElement.webkitRequestFullscreen ||
+            document.documentElement.mozRequestFullscreen ||
+            document.documentElement.msRequestFullscreen;
+        navigator.getUserMedia = navigator.getUserMedia ||
+            navigator.webkitGetUserMedia ||
+            navigator.mozGetUserMedia ||
+            navigator.msGetUserMedia;
+    </script>
+    <script>
+
         var canvas = document.querySelector('#canvas');
         var camera = document.querySelector('video');
-
-        screen.addEventListener('orientationchange', function()
+        camera.sources = [];
+        MediaStreamTrack.getSources(function(sources)
         {
-            canvas.appendChild(screen.orientation);
+            for (var i = 0, l = sources.length; i < l; i++)
+            {
+                var source = sources[i];
+                if (source.kind == 'video')
+                {
+                    camera.sources.push(source.id);
+                }
+            }
         });
+
+        (window.onresize = function()
+        {
+            camera.width = window.innerWidth;
+            camera.height = window.innerHeight;
+        })();
+
+        var changeCam = document.querySelector('#changeCam');
+        changeCam.onclick = function()
+        {
+            document.documentElement.requestFullscreen();
+            if (typeof window.stream !== 'undefined')
+            {
+                window.stream.stop();
+            }
+            navigator.getUserMedia(
+            {
+                video:
+                {
+                    mandatory:
+                    {
+                        maxWidth: 1600,
+                        maxHeight: 900,
+                    },
+                    optional:
+                    [
+                        {
+                            sourceId: camera.sources[changeCam.tick = (changeCam.tick + 1 || 0) % camera.sources.length],
+                        },
+                    ],
+                },
+            },
+            function(stream)
+            {
+                window.stream = stream;
+                camera.src = window.URL.createObjectURL(stream);
+                camera.play();
+            },
+            function() {});
+        };
     </script>
 </html>
