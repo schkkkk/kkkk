@@ -2,54 +2,18 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="mobile-web-app-capable" content="yes">
     <title>WEBRTC camera</title>
-    <style>
-        button::-moz-focus-inner {
-            padding: 0;
-            border: 0;
-        }
-        body {
-            margin: 0;
-            background: #000;
-        }
-        #changeCam {
-            position: fixed;
-            top: 50%;
-            left: 0;
-        }
-    </style>
+    <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-blue.min.css">
 <body>
-    <div id="canvas">
-        <video></video>
-    </div>
-    <button id="changeCam">switch</button>
-    <script>
-        document.documentElement.requestFullscreen = document.documentElement.requestFullscreen ||
-            document.documentElement.webkitRequestFullscreen ||
-            document.documentElement.mozRequestFullscreen ||
-            document.documentElement.msRequestFullscreen;
-        navigator.getUserMedia = navigator.getUserMedia ||
-            navigator.webkitGetUserMedia ||
-            navigator.mozGetUserMedia ||
-            navigator.msGetUserMedia;
-    </script>
-    <script>
+    <video></video>
 
-        var canvas = document.querySelector('#canvas');
+    <script>
         var camera = document.querySelector('video');
-        camera.sources = [];
-        MediaStreamTrack.getSources(function(sources)
-        {
-            for (var i = 0, l = sources.length; i < l; i++)
-            {
-                var source = sources[i];
-                if (source.kind == 'video')
-                {
-                    camera.sources.push(source.id);
-                }
-            }
+        camera.addEventListener('canplay', () => {
+            // Chrome needs EventCallback to play
+            camera.play();
         });
 
         (window.onresize = function()
@@ -58,38 +22,27 @@
             camera.height = window.innerHeight;
         })();
 
-        var changeCam = document.querySelector('#changeCam');
-        changeCam.onclick = function()
-        {
-            document.documentElement.requestFullscreen();
-            if (typeof window.stream !== 'undefined')
+        navigator.mediaDevices.getUserMedia({
+            // video: true,
+            // Chrome 46.0.2457.0 does not support below constraint
+            video: {
+                width: 720,
+                height: 480,
+                facingMode: 'environment',
+            },
+        }).then(stream => {
+            camera.src = window.URL.createObjectURL(stream);
+            camera.play();
+        }).catch(err => {
+            alert(err);
+            if (err.name == 'NotFoundError')
             {
-                window.stream.stop();
+                alert('사용가능한 카메라가 없습니다!');
             }
-            navigator.getUserMedia(
+            else
             {
-                video:
-                {
-                    mandatory:
-                    {
-                        maxWidth: 1600,
-                        maxHeight: 900,
-                    },
-                    optional:
-                    [
-                        {
-                            sourceId: camera.sources[changeCam.tick = (changeCam.tick + 1 || 0) % camera.sources.length],
-                        },
-                    ],
-                },
-            },
-            function(stream)
-            {
-                window.stream = stream;
-                camera.src = window.URL.createObjectURL(stream);
-                camera.play();
-            },
-            function() {});
-        };
+                alert('카메라 접근 권한을 허용해주세요');
+            }
+        });
     </script>
 </html>
