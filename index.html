@@ -6,6 +6,8 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>WEBRTC camera</title>
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-blue.min.css">
+    <script src="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <style>
         #canvas {
             position: fixed;
@@ -29,7 +31,7 @@
                 background: #fff;
                 pointer-events: none;
             }
-        span {
+        #log {
             position: fixed;
             top: 0;
             left: 0;
@@ -38,10 +40,19 @@
             padding: 0 .5em;
             width: 100%;
         }
+        #capture {
+            position: fixed;
+            bottom: 1em;
+            left: 50%;
+            transform: translateX(-50%);
+        }
     </style>
 <body>
     <div id="canvas"><video></video><div></div></div>
-    <span></span>
+    <span id="log"></span>
+    <button id="capture" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+        <i class="material-icons">camera</i>
+    </button>
 
     <script>
         try
@@ -111,8 +122,12 @@
             }
         });
 
-        var log = document.querySelector('span');
+        var log = document.querySelector('#log');
         window.addEventListener('deviceorientation', e => {
+            if (!e.alpha)
+            {
+                return;
+            }
             var height = 160;
             var thetaHorizon = e.beta / 180 * Math.PI;
             var length = Math.tan(thetaHorizon) * height;
@@ -121,7 +136,27 @@
                 'beta: ' + e.beta.toFixed(10),
                 'gamma: ' + e.gamma.toFixed(10),
                 '물제와의 거리: ' + length,
+                '현재 배율: ' + camera.height / window.innerHeight,
             ].join('<br>');
+        });
+        log.addEventListener('click', e => {
+            log.remove();
+        });
+
+        document.querySelector('#capture').addEventListener('click', e => {
+            camera.pause();
+            var zoom = camera.height / window.innerHeight;
+            var canvas = document.createElement('canvas');
+            canvas.width = camera.canvas.clientWidth;
+            canvas.height = camera.canvas.clientHeight;
+            canvas.getContext('2d').drawImage(camera,
+                (camera.clientWidth - canvas.width) / 2 / zoom, camera.canvas.scrollTop / zoom,
+                canvas.width / zoom, canvas.height / zoom,
+                0, 0, canvas.width, canvas.height);
+            canvas.style.position = 'fixed';
+            canvas.style.top = canvas.style.left = 0;
+            canvas.style.background = '#fff';
+            document.querySelector('body').appendChild(canvas);
         });
     </script>
 </html>
