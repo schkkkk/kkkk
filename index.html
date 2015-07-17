@@ -6,32 +6,66 @@
     <meta name="mobile-web-app-capable" content="yes">
     <title>WEBRTC camera</title>
     <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.0/material.red-blue.min.css">
+    <style>
+        #canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+        video {
+            transform: translateX(-25%);
+        }
+        video + div {
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, .6);
+            position: absolute;
+        }
+    </style>
 <body>
-    <video></video>
+    <div id="canvas"><video></video><div></div></div>
 
     <script>
+        try
+        {
+            screen.orientation.lock('portrait');
+        }
+        catch (e)
+        {
+            if (!screen.mozLockOrientation('portrait'))
+            {
+                alert('화면 고정을 실패했습니다.\n화면 회전 기능을 수동으로 꺼주세요.');
+            }
+        }
+
         var camera = document.querySelector('video');
-        camera.addEventListener('canplay', () => {
+        camera.height = window.innerHeight * 2;
+        camera.ground = camera.nextSibling;
+        camera.canvas = camera.parentNode;
+        camera.addEventListener('loadedmetadata', () => {
+            camera.ground.style.marginTop = -camera.height / 2 + 'px';
+            camera.canvas.scrollTop = camera.height / 2 / 7;
             // Chrome needs EventCallback to play
             camera.play();
         });
-
-        (window.onresize = function()
-        {
-            camera.width = window.innerWidth;
-            camera.height = window.innerHeight;
-        })();
+        camera.addEventListener('contextmenu', e => {
+            e.preventDefault();
+        });
 
         navigator.mediaDevices.getUserMedia({
-            // video: true,
+            video: true,
             // Chrome 46.0.2457.0 does not support below constraint
-            video: {
-                width: 720,
-                height: 480,
-                facingMode: 'environment',
-            },
+            // video: {
+            //     width: 640,
+            //     height: 480,
+            //     facingMode: 'environment',
+            // },
         }).then(stream => {
-            camera.src = window.URL.createObjectURL(stream);
+            camera.src = URL.createObjectURL(stream);
             camera.play();
         }).catch(err => {
             alert(err);
