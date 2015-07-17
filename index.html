@@ -36,10 +36,7 @@
         }
         catch (e)
         {
-            if (!screen.mozLockOrientation('portrait'))
-            {
-                alert('화면 고정을 실패했습니다.\n화면 회전 기능을 수동으로 꺼주세요.');
-            }
+            alert('화면 고정을 실패했습니다.\n화면 회전 기능을 수동으로 꺼주세요.');
         }
 
         var camera = document.querySelector('video');
