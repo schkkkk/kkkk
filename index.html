@@ -36,7 +36,7 @@
             top: 0;
             left: 0;
             display: block;
-            background: #fff;
+            background: rgba(255,255,255,.4);
             padding: 0 .5em;
             width: 100%;
         }
@@ -50,9 +50,9 @@
 <body>
     <div id="canvas"><video></video><div></div></div>
     <span id="log"></span>
-    <button id="capture" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
+    <!--button id="capture" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
         <i class="material-icons">camera</i>
-    </button>
+    </button-->
 
     <script>
         try
@@ -102,25 +102,25 @@
             camera.play();
         });
 
-        camera.addEventListener('touchstart', e => {
-            camera.zoom = undefined;
-        });
-        camera.addEventListener('touchmove', e => {
-            if (e.changedTouches.length == 2)
-            {
-                var dx = e.changedTouches[0].clientX - e.changedTouches[1].clientX,
-                    dy = e.changedTouches[0].clientY - e.changedTouches[1].clientY;
-                var zoom = Math.sqrt(dx * dx + dy * dy);
-                if (typeof camera.zoom === 'undefined')
-                {
-                    camera.zoom = zoom;
-                    camera.zoomBase = camera.height / window.innerHeight;
-                }
-                zoom = Math.max(1, Math.min(camera.zoomBase * (1 + (zoom - camera.zoom) / 300), 2));
-                camera.height = window.innerHeight * zoom;
-                camera.adjustGround();
-            }
-        });
+        // camera.addEventListener('touchstart', e => {
+        //     camera.zoom = undefined;
+        // });
+        // camera.addEventListener('touchmove', e => {
+        //     if (e.changedTouches.length == 2)
+        //     {
+        //         var dx = e.changedTouches[0].clientX - e.changedTouches[1].clientX,
+        //             dy = e.changedTouches[0].clientY - e.changedTouches[1].clientY;
+        //         var zoom = Math.sqrt(dx * dx + dy * dy);
+        //         if (typeof camera.zoom === 'undefined')
+        //         {
+        //             camera.zoom = zoom;
+        //             camera.zoomBase = camera.height / window.innerHeight;
+        //         }
+        //         zoom = Math.max(1, Math.min(camera.zoomBase * (1 + (zoom - camera.zoom) / 300), 2));
+        //         camera.height = window.innerHeight * zoom;
+        //         camera.adjustGround();
+        //     }
+        // });
 
         var log = document.querySelector('#log');
         window.addEventListener('deviceorientation', e => {
@@ -143,20 +143,20 @@
             log.remove();
         });
 
-        document.querySelector('#capture').addEventListener('click', e => {
-            camera.pause();
-            var zoom = camera.height / window.innerHeight;
-            var canvas = document.createElement('canvas');
-            canvas.width = camera.canvas.clientWidth;
-            canvas.height = camera.canvas.clientHeight;
-            canvas.getContext('2d').drawImage(camera,
-                (camera.clientWidth - canvas.width) / 2 / zoom, camera.canvas.scrollTop / zoom,
-                canvas.width / zoom, canvas.height / zoom,
-                0, 0, canvas.width, canvas.height);
-            canvas.style.position = 'fixed';
-            canvas.style.top = canvas.style.left = 0;
-            canvas.style.background = '#fff';
-            document.querySelector('body').appendChild(canvas);
-        });
+        // document.querySelector('#capture').addEventListener('click', e => {
+        //     camera.pause();
+        //     var zoom = camera.height / window.innerHeight;
+        //     var canvas = document.createElement('canvas');
+        //     canvas.width = camera.canvas.clientWidth;
+        //     canvas.height = camera.canvas.clientHeight;
+        //     canvas.getContext('2d').drawImage(camera,
+        //         (camera.clientWidth - canvas.width) / 2 / zoom, camera.canvas.scrollTop / zoom,
+        //         canvas.width / zoom, canvas.height / zoom,
+        //         0, 0, canvas.width, canvas.height);
+        //     canvas.style.position = 'fixed';
+        //     canvas.style.top = canvas.style.left = 0;
+        //     canvas.style.background = '#fff';
+        //     document.querySelector('body').appendChild(canvas);
+        // });
     </script>
 </html>
