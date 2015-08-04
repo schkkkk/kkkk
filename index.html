@@ -23,13 +23,19 @@
                 left: 50%;
                 transform: translateX(-50%);
             }
-            video + div {
+            .baseline {
                 position: absolute;
                 width: 100%;
                 height: 2px;
                 border: 1px solid #ddd;
+                border-left: 0;
+                border-right: 0;
                 background: #fff;
                 pointer-events: none;
+            }
+            .endline {
+                background: #f00;
+                transform: translateY(-4px);
             }
         #log {
             position: fixed;
@@ -39,6 +45,7 @@
             background: rgba(255,255,255,.4);
             padding: 0 .5em;
             width: 100%;
+            white-space: nowrap;
         }
         #capture {
             position: fixed;
@@ -48,13 +55,15 @@
         }
     </style>
 <body>
-    <div id="canvas"><video></video><div></div></div>
+    <div id="canvas"><video></video><div class="baseline"></div><div class="baseline endline"></div></div>
     <span id="log"></span>
     <!--button id="capture" class="mdl-button mdl-js-button mdl-button--fab mdl-js-ripple-effect mdl-button--colored">
         <i class="material-icons">camera</i>
     </button-->
 
     <script>
+try
+{
         try
         {
             screen.orientation.lock('portrait');
@@ -67,6 +76,7 @@
         var camera = document.querySelector('video');
         camera.height = window.innerHeight * 1.5;
         camera.ground = camera.nextElementSibling;
+        camera.top = camera.ground.nextElementSibling;
         camera.canvas = camera.parentNode;
         camera.addEventListener('contextmenu', e => {
             e.preventDefault();
@@ -121,6 +131,9 @@
         //         camera.adjustGround();
         //     }
         // });
+        camera.addEventListener('click', e => {
+            camera.top.style.top = e.clientY + 'px';
+        });
 
         var log = document.querySelector('#log');
         window.addEventListener('deviceorientation', e => {
@@ -130,13 +143,24 @@
             }
             var height = 160;
             var thetaHorizon = e.beta / 180 * Math.PI;
-            var length = Math.tan(thetaHorizon) * height;
+            var scale = camera.height / window.innerHeight;
+            var distance = Math.tan(thetaHorizon) * height;
+            var lengthProject = parseFloat(camera.ground.style.top) - parseFloat(camera.top.style.top);
+            // |\
+            // | s
+            // |/ s
+            // o   \
+            // o___t\
+            // s = smart phone
+            // o = object
+            // t = theta
+            var lengthMeasured = lengthProject / Math.sin(thetaHorizon) // == Math.cos(Math.PI / 2 - thetaHorizon)
+            var lengthCalculated = lengthMeasured * distance /* do some extra calculation */ ;
             log.innerHTML = [
-                'alpha: ' + e.alpha.toFixed(10),
-                'beta: ' + e.beta.toFixed(10),
-                'gamma: ' + e.gamma.toFixed(10),
-                '물제와의 거리: ' + length,
-                '현재 배율: ' + camera.height / window.innerHeight,
+                'β: ' + e.beta.toFixed(6) + '; γ: ' + e.gamma.toFixed(6) + '; 카메라 배율: ' + scale,
+                '물제와의 거리: ' + distance,
+                '물체의 길이(px) 정사영: ' + lengthProject + '; 원형: ' + lengthMeasured,
+                '계산된 물체의 길이(m): ' + lengthCalculated
             ].join('<br>');
         });
         log.addEventListener('click', e => {
@@ -158,5 +182,10 @@
         //     canvas.style.background = '#fff';
         //     document.querySelector('body').appendChild(canvas);
         // });
+}
+catch (e)
+{
+    alert(e);
+}
     </script>
 </html>
