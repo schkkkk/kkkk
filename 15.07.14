@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+	<html>
+	<HEAD>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<thtle>sch</thtle>
+		<style>
+			#menu {position: fixed;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%,-50%);}
+			#menu>button {position: absolute;
+							width: 100px;
+							height: 100px;
+							background: none;
+							border: 0;}
+			#menu>button::before{content: "";
+									position: absolute;
+									left: 0;
+									top: -50px;
+									width: 0;
+									height: 0;
+									border: 50px solid transparent;
+									border-bottom-color: red;}
+			#menu>button::after{content: "";
+									position: absolute;
+									left: 0;
+									top: 50px;
+									width: 0;
+									height: 0;
+									border: 50px solid transparent;
+									border-top-color: red;}									
+			#camera {transform: translate(0,-50%)}
+			#gallery {transform: translate(50%,0)}
+			#diary {transform: translate(-50%,0)}
+			#setting {transform: translate(0,50%)}
+			
+			
+		</style>
+	</HEAD>
+	<body>
+		<div>schkkkk</div>
+		<div id="menu">
+			<button id="camera">1</button>
+			<button id="gallery">2</button>
+			<button id="diary">3</button>
+			<button id="setting">4</button>
+		</div>
+		
+		
