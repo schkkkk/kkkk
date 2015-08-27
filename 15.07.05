@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+    <html>
+    <HEAD>
+        <title>BBang</title>
+
+    </head>
+    <body>
+        <div id="logo">
+            <img src="">
+        </div>
+        <div id="middle">
+            <input type="text">
+            <button>
+                아아
+            </button>
+
+        </div>
+    </body>
