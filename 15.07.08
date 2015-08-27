@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+    <html>
+    <HEAD>
+        <meta charset="utf-8">
+        <title>BBang</title>
+        <style>
+            #header img{
+                width: 150px;
+            }
+            #header{
+                text-align: center;
+                border-bottom: 3px solid #000;
+            }
+            #header > *{
+                vertical-align: middle;
+            }
+        </style>
+    </head>
+    <body>
+        <form id="header">
+            <img src="movie_imageG27ZY55A.jpg">
+            <input name="q" type="text">
+            <button>
+                search
+            </button>
+        </form>
+        <div>
+            <div>
+            방성환 멋쟁이
+            </div>
+            <div>
+            방성환 멍청이
+            </div>
+            <div>
+            방성환 울싼싸나이
+            </div>
+            <div>
+            이화민 교수님 짱
+            </div>
+            <div>
+            사공이 뭉충이
+            </div>
+            <div>
+            사공이 키드
+            </div>
+        </div>
+        <script src="jquery-2.1.4.min.js">
+        </script>
+        <script>
+            var arr=$('div>*');
+
+            $('form').on('submit',function(e)
+            {
+                e.preventDefault();
+                var quary=$('input',this).val();
+                    console.log(quary);
+                 arr.each(function(key,element)
+                 {
+                    console.log(element);
+                    console.log($(element).text().indexOf(quary));
+                    if($(element).text().indexOf(quary)==-1)
+                        $(element).hide();
+                    else
+                        $(element).show();
+                });
+
+           });
+
+        </script>
+    </body>
